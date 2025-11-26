@@ -99,7 +99,7 @@ export default function AddTaskModal({ visible, onClose, onSubmit, initialTask, 
                 <View style={styles.overlay}>
                     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                         <KeyboardAvoidingView
-                            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
                             style={styles.keyboardView}
                         >
                             <View style={styles.modalContainer}>
@@ -264,6 +264,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         marginBottom: 12,
         padding: 8,
+        color: '#333', // Explicit color for dark mode compatibility
     },
     inputDesc: {
         fontSize: 16,
