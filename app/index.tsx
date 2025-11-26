@@ -4,11 +4,11 @@ import {
     View,
     Text,
     FlatList,
-    SafeAreaView,
     StatusBar,
     TouchableOpacity,
     Platform
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import * as Notifications from 'expo-notifications';
 import { useTasks, Task, Priority } from '../hooks/useTasks';
@@ -16,15 +16,21 @@ import TaskItem from '../components/TaskItem';
 import AddTaskModal from '../components/AddTaskModal';
 import ProjectFilter from '../components/ProjectFilter';
 
-Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-        shouldShowAlert: true,
-        shouldPlaySound: true,
-        shouldSetBadge: false,
-        shouldShowBanner: true,
-        shouldShowList: true,
-    }),
-});
+import Constants, { ExecutionEnvironment } from 'expo-constants';
+
+const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+
+if (!isExpoGo) {
+    Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+            shouldShowAlert: true,
+            shouldPlaySound: true,
+            shouldSetBadge: false,
+            shouldShowBanner: true,
+            shouldShowList: true,
+        }),
+    });
+}
 
 export default function App() {
     const { tasks, projects, loading, addTask, updateTask, toggleTask, deleteTask } = useTasks();

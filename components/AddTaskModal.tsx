@@ -99,7 +99,7 @@ export default function AddTaskModal({ visible, onClose, onSubmit, initialTask, 
                 <View style={styles.overlay}>
                     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                         <KeyboardAvoidingView
-                            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                             style={styles.keyboardView}
                         >
                             <View style={styles.modalContainer}>

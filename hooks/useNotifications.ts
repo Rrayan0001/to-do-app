@@ -2,6 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import { Platform } from 'react-native';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
+
+const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
 
 export const useNotifications = () => {
     const [expoPushToken, setExpoPushToken] = useState<string | undefined>('');
@@ -10,6 +13,8 @@ export const useNotifications = () => {
     const responseListener = useRef<Notifications.Subscription | undefined>(undefined);
 
     useEffect(() => {
+        if (isExpoGo) return;
+
         registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
 
         notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
@@ -35,6 +40,11 @@ export const useNotifications = () => {
     }, []);
 
     const scheduleReminder = async (title: string, body: string, date: number) => {
+        if (isExpoGo) {
+            console.log("Notifications disabled in Expo Go");
+            return null;
+        }
+
         const trigger = new Date(date);
         // Only schedule if date is in the future
         if (trigger.getTime() <= Date.now()) return null;
@@ -56,6 +66,8 @@ export const useNotifications = () => {
     };
 
     const cancelReminder = async (identifier: string) => {
+        if (isExpoGo) return;
+
         try {
             await Notifications.cancelScheduledNotificationAsync(identifier);
         } catch (e) {
@@ -71,6 +83,8 @@ export const useNotifications = () => {
 };
 
 async function registerForPushNotificationsAsync() {
+    if (isExpoGo) return;
+
     let token;
 
     if (Platform.OS === 'android') {
