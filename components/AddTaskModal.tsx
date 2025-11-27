@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
     headerTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#333',
+        color: '#000',
     },
     form: {
         marginBottom: 20,
@@ -282,11 +282,11 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         marginBottom: 12,
         padding: 8,
-        color: '#333', // Explicit color for dark mode compatibility
+        color: '#000',
     },
     inputDesc: {
         fontSize: 16,
-        color: '#666',
+        color: '#000',
         marginBottom: 20,
         padding: 8,
         minHeight: 40,
