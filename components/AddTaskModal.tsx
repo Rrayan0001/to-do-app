@@ -95,13 +95,14 @@ export default function AddTaskModal({ visible, onClose, onSubmit, initialTask, 
             transparent={true}
             onRequestClose={onClose}
         >
-            <TouchableWithoutFeedback onPress={onClose}>
-                <View style={styles.overlay}>
-                    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                        <KeyboardAvoidingView
-                            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                            style={styles.keyboardView}
-                        >
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={styles.keyboardView}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+            >
+                <TouchableWithoutFeedback onPress={onClose}>
+                    <View style={styles.overlay}>
+                        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                             <View style={styles.modalContainer}>
                                 <View style={styles.header}>
                                     <Text style={styles.headerTitle}>
@@ -109,100 +110,109 @@ export default function AddTaskModal({ visible, onClose, onSubmit, initialTask, 
                                     </Text>
                                 </View>
 
-                                <View style={styles.form}>
-                                    <TextInput
-                                        style={styles.inputTitle}
-                                        placeholder="What needs to be done?"
-                                        value={title}
-                                        onChangeText={setTitle}
-                                        autoFocus={true}
-                                    />
+                                <ScrollView
+                                    style={styles.scrollView}
+                                    contentContainerStyle={styles.scrollContent}
+                                    keyboardShouldPersistTaps="handled"
+                                    showsVerticalScrollIndicator={false}
+                                >
+                                    <View style={styles.form}>
+                                        <TextInput
+                                            style={styles.inputTitle}
+                                            placeholder="What needs to be done?"
+                                            placeholderTextColor="#999"
+                                            value={title}
+                                            onChangeText={setTitle}
+                                            autoFocus={true}
+                                        />
 
-                                    <TextInput
-                                        style={styles.inputDesc}
-                                        placeholder="Description"
-                                        value={description}
-                                        onChangeText={setDescription}
-                                        multiline
-                                    />
+                                        <TextInput
+                                            style={styles.inputDesc}
+                                            placeholder="Description"
+                                            placeholderTextColor="#999"
+                                            value={description}
+                                            onChangeText={setDescription}
+                                            multiline
+                                        />
 
-                                    <View style={styles.optionsRow}>
-                                        {/* Date Picker */}
-                                        <TouchableOpacity
-                                            style={[styles.optionButton, dueDate && styles.optionButtonActive]}
-                                            onPress={() => showMode('date')}
-                                        >
-                                            <Ionicons name="calendar-outline" size={20} color={dueDate ? '#007AFF' : '#666'} />
-                                            <Text style={[styles.optionText, dueDate && styles.optionTextActive]}>
-                                                {dueDate ? dueDate.toLocaleDateString() : 'Date'}
-                                            </Text>
-                                        </TouchableOpacity>
-
-                                        {/* Time Picker - Only show if date is selected */}
-                                        {dueDate && (
+                                        <View style={styles.optionsRow}>
+                                            {/* Date Picker */}
                                             <TouchableOpacity
-                                                style={[styles.optionButton, styles.optionButtonActive, { marginLeft: 8 }]}
-                                                onPress={() => showMode('time')}
+                                                style={[styles.optionButton, dueDate && styles.optionButtonActive]}
+                                                onPress={() => showMode('date')}
                                             >
-                                                <Ionicons name="time-outline" size={20} color="#007AFF" />
-                                                <Text style={[styles.optionText, styles.optionTextActive]}>
-                                                    {dueDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                <Ionicons name="calendar-outline" size={20} color={dueDate ? '#007AFF' : '#666'} />
+                                                <Text style={[styles.optionText, dueDate && styles.optionTextActive]}>
+                                                    {dueDate ? dueDate.toLocaleDateString() : 'Date'}
                                                 </Text>
                                             </TouchableOpacity>
-                                        )}
 
-                                        {/* Priority Selector */}
-                                        <View style={[styles.priorityContainer, { marginLeft: 'auto' }]}>
-                                            {[Priority.P1, Priority.P2, Priority.P3, Priority.P4].map((p) => (
+                                            {/* Time Picker - Only show if date is selected */}
+                                            {dueDate && (
                                                 <TouchableOpacity
-                                                    key={p}
-                                                    style={[
-                                                        styles.priorityButton,
-                                                        priority === p && { backgroundColor: getPriorityColor(p) + '20', borderColor: getPriorityColor(p) }
-                                                    ]}
-                                                    onPress={() => setPriority(p)}
+                                                    style={[styles.optionButton, styles.optionButtonActive, { marginLeft: 8 }]}
+                                                    onPress={() => showMode('time')}
                                                 >
-                                                    <Ionicons
-                                                        name="flag"
-                                                        size={16}
-                                                        color={getPriorityColor(p)}
-                                                    />
+                                                    <Ionicons name="time-outline" size={20} color="#007AFF" />
+                                                    <Text style={[styles.optionText, styles.optionTextActive]}>
+                                                        {dueDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                    </Text>
+                                                </TouchableOpacity>
+                                            )}
+
+                                            {/* Priority Selector */}
+                                            <View style={[styles.priorityContainer, { marginLeft: 'auto' }]}>
+                                                {[Priority.P1, Priority.P2, Priority.P3, Priority.P4].map((p) => (
+                                                    <TouchableOpacity
+                                                        key={p}
+                                                        style={[
+                                                            styles.priorityButton,
+                                                            priority === p && { backgroundColor: getPriorityColor(p) + '20', borderColor: getPriorityColor(p) }
+                                                        ]}
+                                                        onPress={() => setPriority(p)}
+                                                    >
+                                                        <Ionicons
+                                                            name="flag"
+                                                            size={16}
+                                                            color={getPriorityColor(p)}
+                                                        />
+                                                    </TouchableOpacity>
+                                                ))}
+                                            </View>
+                                        </View>
+
+                                        {/* Project Selector */}
+                                        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.projectRow}>
+                                            {projects.map((proj) => (
+                                                <TouchableOpacity
+                                                    key={proj.id}
+                                                    style={[
+                                                        styles.projectPill,
+                                                        projectId === proj.id && { backgroundColor: proj.color + '20', borderColor: proj.color }
+                                                    ]}
+                                                    onPress={() => setProjectId(proj.id)}
+                                                >
+                                                    <Text style={[
+                                                        styles.projectText,
+                                                        projectId === proj.id && { color: proj.color, fontWeight: '700' }
+                                                    ]}>
+                                                        {proj.name}
+                                                    </Text>
                                                 </TouchableOpacity>
                                             ))}
-                                        </View>
+                                        </ScrollView>
+
+                                        {showDatePicker && (
+                                            <DateTimePicker
+                                                value={dueDate || new Date()}
+                                                mode={datePickerMode}
+                                                display="default"
+                                                onChange={onDateChange}
+                                                minimumDate={new Date()}
+                                            />
+                                        )}
                                     </View>
-
-                                    {/* Project Selector */}
-                                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.projectRow}>
-                                        {projects.map((proj) => (
-                                            <TouchableOpacity
-                                                key={proj.id}
-                                                style={[
-                                                    styles.projectPill,
-                                                    projectId === proj.id && { backgroundColor: proj.color + '20', borderColor: proj.color }
-                                                ]}
-                                                onPress={() => setProjectId(proj.id)}
-                                            >
-                                                <Text style={[
-                                                    styles.projectText,
-                                                    projectId === proj.id && { color: proj.color, fontWeight: '700' }
-                                                ]}>
-                                                    {proj.name}
-                                                </Text>
-                                            </TouchableOpacity>
-                                        ))}
-                                    </ScrollView>
-
-                                    {showDatePicker && (
-                                        <DateTimePicker
-                                            value={dueDate || new Date()}
-                                            mode={datePickerMode}
-                                            display="default"
-                                            onChange={onDateChange}
-                                            minimumDate={new Date()}
-                                        />
-                                    )}
-                                </View>
+                                </ScrollView>
 
                                 <View style={styles.footer}>
                                     <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
@@ -218,10 +228,10 @@ export default function AddTaskModal({ visible, onClose, onSubmit, initialTask, 
                                     </TouchableOpacity>
                                 </View>
                             </View>
-                        </KeyboardAvoidingView>
-                    </TouchableWithoutFeedback>
-                </View>
-            </TouchableWithoutFeedback>
+                        </TouchableWithoutFeedback>
+                    </View>
+                </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
         </Modal>
     );
 }
@@ -234,6 +244,7 @@ const styles = StyleSheet.create({
     },
     keyboardView: {
         width: '100%',
+        flex: 1,
     },
     modalContainer: {
         backgroundColor: '#fff',
@@ -246,6 +257,13 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 10,
         elevation: 5,
+        maxHeight: '80%',
+    },
+    scrollView: {
+        maxHeight: '60%',
+    },
+    scrollContent: {
+        paddingBottom: 20,
     },
     header: {
         marginBottom: 16,
